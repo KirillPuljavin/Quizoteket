@@ -1,0 +1,220 @@
+@import "./variables.scss";
+
+/* === Reset === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-md;
+  color: $color-dark;
+  background-color: $color-bg;
+  line-height: 1.6;
+}
+
+/* === Layout Helpers === */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-4;
+}
+
+.flex {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.grid {
+  display: grid;
+  gap: $space-4;
+}
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* === Spacing Utils === */
+.mt-1 {
+  margin-top: $space-1;
+}
+.mt-2 {
+  margin-top: $space-2;
+}
+.mt-4 {
+  margin-top: $space-4;
+}
+.mt-8 {
+  margin-top: $space-8;
+}
+.mb-1 {
+  margin-bottom: $space-1;
+}
+.mb-2 {
+  margin-bottom: $space-2;
+}
+.mb-4 {
+  margin-bottom: $space-4;
+}
+.mb-8 {
+  margin-bottom: $space-8;
+}
+.p-2 {
+  padding: $space-2;
+}
+.p-4 {
+  padding: $space-4;
+}
+.p-6 {
+  padding: $space-6;
+}
+
+/* === Typography === */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: $font-family-heading;
+  font-weight: 700;
+  color: $color-dark;
+}
+h1 {
+  font-size: $font-size-2xl;
+}
+h2 {
+  font-size: $font-size-xl;
+}
+h3 {
+  font-size: $font-size-lg;
+}
+
+/* === Buttons === */
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: $space-2 $space-4;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: $transition-fast;
+  box-shadow: $shadow-sm;
+
+  &.primary {
+    background-color: $color-primary;
+    color: $color-light;
+    &:hover {
+      background-color: darken($color-primary, 8%);
+    }
+  }
+
+  &.secondary {
+    background-color: $color-secondary;
+    color: $color-light;
+    &:hover {
+      background-color: darken($color-secondary, 8%);
+    }
+  }
+
+  &.outline {
+    background-color: transparent;
+    border: 1px solid $color-border;
+    color: $color-dark;
+    &:hover {
+      background-color: $color-border;
+    }
+  }
+}
+
+/* === Cards === */
+.card {
+  background-color: $color-light;
+  border: 1px solid $color-border;
+  padding: $space-4;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  transition: $transition-medium;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+/* === Forms === */
+.input {
+  width: 100%;
+  padding: $space-2;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  font-size: $font-size-md;
+  transition: $transition-fast;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+    outline: none;
+  }
+}
+
+.label {
+  display: block;
+  margin-bottom: $space-1;
+  font-weight: 600;
+  color: $color-dark;
+}
+
+/* === Modals === */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba($color-dark, 0.6);
+  z-index: $z-modal;
+
+  .modal-content {
+    background-color: $color-light;
+    padding: $space-6;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    width: min(500px, 90%);
+  }
+}
+
+/* === Utility Helpers === */
+.text-center {
+  text-align: center;
+}
+.text-muted {
+  color: $color-muted;
+}
+.text-primary {
+  color: $color-primary;
+}
+.text-error {
+  color: $color-error;
+}
+.hidden {
+  display: none;
+}
