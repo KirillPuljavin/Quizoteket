@@ -1,3 +1,5 @@
+// File: src/styles/theme/variables.scss
+
 /* === Colors === */
 $color-primary: #2563eb;
 $color-secondary: #9333ea;
@@ -7,9 +9,9 @@ $color-error: #ef4444;
 $color-warning: #facc15;
 $color-info: #3b82f6;
 
-$color-bg: #f9fafb;
+$color-bg: #d1dfe6;
 $color-bg-dark: #18181b;
-$color-light: #ffffff;
+$color-light: #ebf3ff;
 $color-dark: #111827;
 $color-muted: #6b7280;
 $color-border: #e5e7eb;
@@ -46,6 +48,7 @@ $shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
 $shadow-md: 0 2px 6px rgba(0, 0, 0, 0.1);
 $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
 $shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.2);
+$shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 
 /* === Transitions === */
 $transition-fast: all 0.15s ease;

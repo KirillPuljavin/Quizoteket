@@ -1,0 +1,78 @@
+// File: src/styles/components/dashboard.scss
+@use "../theme/_bundler.scss" as theme;
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__welcome {
+    text-align: center;
+
+    .dashboard__title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: theme.$color-primary;
+    }
+
+    .dashboard__subtitle {
+      font-size: 1rem;
+      color: theme.$color-dark;
+      max-width: 600px;
+      margin: 0.5rem auto 0;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  &__section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: theme.$color-dark;
+  }
+
+  &__pinned-list,
+  &__featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+/* === Quiz Card Component === */
+.quiz-card {
+  background-color: theme.$color-light;
+  border: 1px solid theme.$color-border;
+  border-radius: theme.$radius-md;
+  padding: 1rem;
+  box-shadow: theme.$shadow-sm;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: theme.$shadow-md;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: theme.$color-primary;
+  }
+
+  &__desc {
+    font-size: 0.9rem;
+    color: theme.$color-muted;
+  }
+}

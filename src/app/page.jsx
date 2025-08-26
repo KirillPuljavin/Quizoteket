@@ -1,97 +1,65 @@
+// File: src/app/page.jsx
 "use client";
-import { useState } from "react";
 
-export default function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+import React, { useState } from "react";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
+import "@/styles/components/home.scss";
 
-  function handleLogin(e) {
+export default function HomePage() {
+  const [form, setForm] = useState({ email: "", password: "" });
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleLogin = (e) => {
     e.preventDefault();
-    // TODO: Replace with real auth later
-    if (email.trim() && password.trim()) {
-      setIsLoggedIn(true);
-    }
-  }
+    console.log("Logging in with:", form);
+    // TODO: Connect to API endpoint later
+  };
 
   return (
-    <section>
-      {!isLoggedIn ? (
-        <div
-          style={{
-            maxWidth: "400px",
-            margin: "2rem auto",
-            padding: "2rem",
-            background: "#fff",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-          }}
-        >
-          <h2>Logga in</h2>
-          <form
-            onSubmit={handleLogin}
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
-            <input
-              type="email"
-              placeholder="E-post"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{
-                padding: "0.5rem",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-              }}
-            />
-            <input
-              type="password"
-              placeholder="Lösenord"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                padding: "0.5rem",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                padding: "0.6rem",
-                background: "#18181b",
-                color: "#fff",
-                fontWeight: "bold",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Logga in
-            </button>
-          </form>
+    <main className="home">
+      <section className="home__content">
+        <h1 className="home__title">Quizoteket</h1>
+        <p className="home__subtitle">
+          Skapa, spela och tävla i AI-genererade quiz!
+        </p>
+
+        <form className="home__form" onSubmit={handleLogin}>
+          <Input
+            label="E-post"
+            type="email"
+            name="email"
+            placeholder="Ange din e-post"
+            value={form.email}
+            onChange={handleChange}
+          />
+
+          <Input
+            label="Lösenord"
+            type="password"
+            name="password"
+            placeholder="Ange lösenord"
+            value={form.password}
+            onChange={handleChange}
+          />
+
+          <Button type="primary" size="md">
+            Logga in
+          </Button>
+        </form>
+
+        <div className="home__actions">
+          <Button type="secondary" size="sm">
+            Skapa konto
+          </Button>
+          <Button type="ghost" size="sm">
+            Fortsätt som gäst
+          </Button>
         </div>
-      ) : (
-        <div style={{ textAlign: "center" }}>
-          <h1>Välkommen till Quizoteket 🎉</h1>
-          <p>Här kan du skapa AI-genererade quiz och utmana dina vänner.</p>
-          <button
-            style={{
-              marginTop: "1rem",
-              padding: "0.7rem 1.5rem",
-              background: "#2563eb",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
-            Skapa quiz
-          </button>
-        </div>
-      )}
-    </section>
+      </section>
+    </main>
   );
 }

@@ -1,5 +1,7 @@
+// File: src/app/layout.tsx
 import "@/styles/theme/_bundler.scss";
 import type { Metadata } from "next";
+import Wrapper from "@/components/Wrapper";
 
 export const metadata: Metadata = {
   title: "Quizoteket",
@@ -13,7 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="sv">
-      <body>{children}</body>
+      <body>
+        <Wrapper>{children}</Wrapper>
+      </body>
     </html>
   );
 }

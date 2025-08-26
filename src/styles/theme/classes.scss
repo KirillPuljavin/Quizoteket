@@ -1,4 +1,5 @@
-@import "./variables.scss";
+// File: src/styles/theme/classes.scss
+@use "./variables.scss" as *;
 
 /* === Reset === */
 * {
@@ -64,6 +65,7 @@ body {
 .mt-8 {
   margin-top: $space-8;
 }
+
 .mb-1 {
   margin-bottom: $space-1;
 }
@@ -76,6 +78,7 @@ body {
 .mb-8 {
   margin-bottom: $space-8;
 }
+
 .p-2 {
   padding: $space-2;
 }
@@ -107,41 +110,85 @@ h3 {
 }
 
 /* === Buttons === */
-.btn {
+.button {
   display: inline-flex;
-  justify-content: center;
   align-items: center;
-  padding: $space-2 $space-4;
-  border-radius: $radius-md;
-  font-size: $font-size-md;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: $transition-fast;
-  box-shadow: $shadow-sm;
+  justify-content: center;
+  gap: 0.4rem;
 
-  &.primary {
+  padding: 0.6rem 1.2rem;
+  border-radius: $radius-md;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &__label {
+    display: inline-block;
+    line-height: 1.2;
+    pointer-events: none;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* === Sizes === */
+  &--sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  &--md {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+  }
+  &--lg {
+    padding: 0.8rem 1.6rem;
+    font-size: 1.1rem;
+  }
+
+  /* === Variants === */
+  &--primary {
     background-color: $color-primary;
     color: $color-light;
-    &:hover {
-      background-color: darken($color-primary, 8%);
+    &:hover:not(:disabled) {
+      background-color: darken($color-primary, 7%);
     }
   }
 
-  &.secondary {
+  &--secondary {
     background-color: $color-secondary;
     color: $color-light;
-    &:hover {
-      background-color: darken($color-secondary, 8%);
+    &:hover:not(:disabled) {
+      background-color: darken($color-secondary, 7%);
     }
   }
 
-  &.outline {
+  &--accent {
+    background-color: $color-accent;
+    color: $color-light;
+    &:hover:not(:disabled) {
+      background-color: darken($color-accent, 7%);
+    }
+  }
+
+  &--outline {
     background-color: transparent;
-    border: 1px solid $color-border;
+    border: 2px solid $color-primary;
+    color: $color-primary;
+    &:hover:not(:disabled) {
+      background-color: rgba($color-primary, 0.05);
+    }
+  }
+
+  &--ghost {
+    background-color: transparent;
     color: $color-dark;
-    &:hover {
-      background-color: $color-border;
+    &:hover:not(:disabled) {
+      background-color: rgba(0, 0, 0, 0.05);
     }
   }
 }
@@ -160,27 +207,43 @@ h3 {
   }
 }
 
-/* === Forms === */
+/* === Inputs === */
 .input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   width: 100%;
-  padding: $space-2;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  font-size: $font-size-md;
-  transition: $transition-fast;
 
-  &:focus {
-    border-color: $color-primary;
-    box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
-    outline: none;
+  &__label {
+    font-weight: 600;
+    color: $color-dark;
   }
-}
 
-.label {
-  display: block;
-  margin-bottom: $space-1;
-  font-weight: 600;
-  color: $color-dark;
+  &__field {
+    padding: $space-2;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    font-size: $font-size-md;
+    transition: $transition-fast;
+
+    &:focus {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+      outline: none;
+    }
+  }
+
+  &__error {
+    color: $color-error;
+    font-size: $font-size-sm;
+  }
+
+  &--error {
+    .input__field {
+      border-color: $color-error;
+      box-shadow: 0 0 0 2px rgba($color-error, 0.2);
+    }
+  }
 }
 
 /* === Modals === */
