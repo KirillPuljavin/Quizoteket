@@ -191,6 +191,16 @@ h3 {
       background-color: rgba(0, 0, 0, 0.05);
     }
   }
+
+  /* === Quiz Selection Utility === */
+  &--selected {
+    background-color: $color-secondary;
+    border: 2px solid $color-secondary;
+    color: $color-light;
+    &:hover:not(:disabled) {
+      background-color: darken($color-secondary, 7%);
+    }
+  }
 }
 
 /* === Cards === */

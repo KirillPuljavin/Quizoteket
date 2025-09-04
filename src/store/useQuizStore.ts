@@ -42,7 +42,6 @@ export const useQuizStore = create<QuizState>()(
     }),
     {
       name: "quiz-storage",
-      skipHydration: true, // lazy hydration
     }
   )
 );

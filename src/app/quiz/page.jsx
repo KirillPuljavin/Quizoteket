@@ -3,27 +3,25 @@
 
 import React, { useState, useEffect } from "react";
 import Button from "@/components/Button";
+import Input from "@/components/Input";
 import { useQuizStore } from "@/store/useQuizStore";
 import "@/styles/components/quiz.scss";
 
 export default function QuizPage() {
   const { addQuiz } = useQuizStore();
 
-  const [stage, setStage] = useState("settings"); // "settings" | "loading" | "quiz" | "result"
+  const [stage, setStage] = useState("settings");
   const [quiz, setQuiz] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(90);
+  const [pinned, setPinned] = useState(false);
 
   const [settings, setSettings] = useState({
     category: "Historia",
     difficulty: "medium",
     numQuestions: 5,
   });
-
-  const handleChange = (e) => {
-    setSettings((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
 
   const handleGenerate = async () => {
     setStage("loading");
@@ -42,12 +40,12 @@ export default function QuizPage() {
 
       setQuiz(data.quiz);
       setStage("quiz");
+      setPinned(false); // reset pin state for new quiz
     } catch {
       setStage("settings");
     }
   };
 
-  // Timer
   useEffect(() => {
     if (stage !== "quiz") return;
     if (timeLeft === 0) {
@@ -78,7 +76,10 @@ export default function QuizPage() {
   };
 
   const handlePin = () => {
-    if (quiz) addQuiz(quiz);
+    if (quiz && !pinned) {
+      addQuiz(quiz);
+      setPinned(true);
+    }
   };
 
   const correctCount =
@@ -89,40 +90,47 @@ export default function QuizPage() {
     <main className="quiz">
       {/* Settings */}
       {stage === "settings" && (
-        <section className="quiz__settings">
+        <section className="quiz__settings card flex-col gap-4">
           <h1>Generera nytt Quiz</h1>
-          <label>
-            Ämne:
-            <input
-              type="text"
-              name="category"
-              value={settings.category}
-              onChange={handleChange}
-            />
-          </label>
-          <label>
-            Svårighetsgrad:
+
+          <Input
+            label="Ämne"
+            type="text"
+            value={settings.category}
+            onChange={(e) =>
+              setSettings((prev) => ({ ...prev, category: e.target.value }))
+            }
+          />
+
+          <div className="input">
+            <label className="input__label">Svårighetsgrad</label>
             <select
-              name="difficulty"
+              className="input__field"
               value={settings.difficulty}
-              onChange={handleChange}
+              onChange={(e) =>
+                setSettings((prev) => ({ ...prev, difficulty: e.target.value }))
+              }
             >
               <option value="easy">Lätt</option>
               <option value="medium">Medel</option>
               <option value="hard">Svår</option>
             </select>
-          </label>
-          <label>
-            Antal frågor:
-            <input
-              type="number"
-              name="numQuestions"
-              value={settings.numQuestions}
-              min={3}
-              max={15}
-              onChange={handleChange}
-            />
-          </label>
+          </div>
+
+          <Input
+            label="Antal frågor"
+            type="number"
+            value={settings.numQuestions}
+            min={3}
+            max={15}
+            onChange={(e) =>
+              setSettings((prev) => ({
+                ...prev,
+                numQuestions: e.target.value,
+              }))
+            }
+          />
+
           <Button type="primary" size="md" onClick={handleGenerate}>
             Generera Quiz
           </Button>
@@ -159,25 +167,28 @@ export default function QuizPage() {
               {quiz.questions[currentStep].question}
             </h2>
             <div className="quiz__options">
-              {quiz.questions[currentStep].options.map((option, i) => (
-                <button
-                  key={i}
-                  className={`quiz__option ${
-                    answers[quiz.questions[currentStep].id] === i
-                      ? "quiz__option--selected"
-                      : ""
-                  }`}
-                  onClick={() =>
-                    handleSelectOption(quiz.questions[currentStep].id, i)
-                  }
-                >
-                  {option}
-                </button>
-              ))}
+              {quiz.questions[currentStep].options.map((option, i) => {
+                const isSelected =
+                  answers[quiz.questions[currentStep].id] === i;
+                return (
+                  <button
+                    key={i}
+                    className={`button button--outline ${
+                      isSelected ? "button--selected" : ""
+                    }`}
+                    onClick={() =>
+                      handleSelectOption(quiz.questions[currentStep].id, i)
+                    }
+                    style={{ justifyContent: "flex-start", textAlign: "left" }}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
             </div>
           </section>
 
-          <section className="quiz__navigation">
+          <section className="quiz__navigation flex gap-4 mt-4">
             <Button
               type="primary"
               size="md"
@@ -187,9 +198,6 @@ export default function QuizPage() {
               {currentStep === quiz.questions.length - 1
                 ? "Slutför Quiz"
                 : "Nästa"}
-            </Button>
-            <Button type="secondary" size="md" onClick={handlePin}>
-              📌 Pinna Quiz
             </Button>
           </section>
         </>
@@ -202,12 +210,63 @@ export default function QuizPage() {
           <p className="quiz__results-subtitle">
             Du fick {correctCount} av {quiz.questions.length} rätt.
           </p>
-          <Button type="primary" size="md" onClick={handleRestart}>
-            Spela igen
-          </Button>
-          <Button type="secondary" size="md" onClick={handlePin}>
-            📌 Pinna Quiz
-          </Button>
+
+          <div className="quiz__review">
+            {quiz.questions.map((q) => {
+              const userAnswer = answers[q.id];
+              const isCorrect = userAnswer === q.correctOption;
+              return (
+                <div
+                  key={q.id}
+                  className={`quiz__review-item ${
+                    isCorrect
+                      ? "quiz__review-item--correct"
+                      : "quiz__review-item--wrong"
+                  }`}
+                >
+                  <h3 className="quiz__review-question">{q.question}</h3>
+                  <ul className="quiz__review-options">
+                    {q.options.map((opt, i) => (
+                      <li
+                        key={i}
+                        className={`quiz__review-option
+                          ${
+                            i === q.correctOption
+                              ? "quiz__review-option--correct"
+                              : ""
+                          }
+                          ${
+                            userAnswer === i && userAnswer !== q.correctOption
+                              ? "quiz__review-option--chosen-wrong"
+                              : ""
+                          }`}
+                      >
+                        {opt}
+                        {i === q.correctOption && " ✅"}
+                        {userAnswer === i &&
+                          userAnswer !== q.correctOption &&
+                          " ❌"}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="quiz__results-actions">
+            <Button type="primary" size="md" onClick={handleRestart}>
+              Spela igen
+            </Button>
+            <Button
+              type="secondary"
+              size="md"
+              onClick={handlePin}
+              disabled={pinned}
+            >
+              {pinned ? "✅ Pinned" : "📌 Pinna Quiz"}
+            </Button>
+          </div>
         </section>
       )}
     </main>

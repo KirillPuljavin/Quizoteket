@@ -4,8 +4,8 @@
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
-  padding: 2rem;
+  gap: 3rem;
+  padding: 2.5rem;
   max-width: 1200px;
   margin: 0 auto;
 
@@ -13,66 +13,112 @@
     text-align: center;
 
     .dashboard__title {
-      font-size: 2rem;
+      font-size: 2.25rem;
       font-weight: 800;
       color: theme.$color-primary;
+      letter-spacing: -0.02em;
     }
 
     .dashboard__subtitle {
-      font-size: 1rem;
-      color: theme.$color-dark;
-      max-width: 600px;
-      margin: 0.5rem auto 0;
+      font-size: 1.1rem;
+      color: theme.$color-muted;
+      max-width: 640px;
+      margin: 0.75rem auto 0;
+      line-height: 1.6;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      font-size: 1.05rem;
+      padding: 0.8rem 1.6rem;
+      border-radius: theme.$radius-lg;
+      box-shadow: theme.$shadow-md;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: theme.$shadow-lg;
+      }
     }
   }
 
-  &__actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
   &__section-title {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     color: theme.$color-dark;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &::after {
+      content: "";
+      flex-grow: 1;
+      height: 2px;
+      background: linear-gradient(to right, theme.$color-primary, transparent);
+      opacity: 0.3;
+    }
   }
 
-  &__pinned-list,
-  &__featured-grid {
+  &__pinned-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  &__empty {
+    text-align: center;
+    color: theme.$color-muted;
+    font-size: 1rem;
+    padding: 2rem;
+    border: 2px dashed theme.$color-border;
+    border-radius: theme.$radius-md;
+    background: rgba(theme.$color-light, 0.6);
   }
 }
 
 /* === Quiz Card Component === */
 .quiz-card {
-  background-color: theme.$color-light;
-  border: 1px solid theme.$color-border;
-  border-radius: theme.$radius-md;
-  padding: 1rem;
+  background: rgba(theme.$color-light, 0.9);
+  border: 1px solid rgba(theme.$color-border, 0.6);
+  border-radius: theme.$radius-lg;
+  padding: 1.25rem 1.5rem;
   box-shadow: theme.$shadow-sm;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  backdrop-filter: blur(6px);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
     box-shadow: theme.$shadow-md;
   }
 
   &__title {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: theme.$color-primary;
   }
 
   &__desc {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: theme.$color-muted;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+
+    button {
+      flex: 1;
+      border-radius: theme.$radius-md;
+      transition: transform 0.15s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
   }
 }
