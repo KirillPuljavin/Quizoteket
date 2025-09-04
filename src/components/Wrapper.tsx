@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 // File: src/components/Wrapper.tsx
 "use client";
 
@@ -54,7 +55,7 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
                 <Button type="primary" size="sm" onClick={handleLogin}>
                   Logga in
                 </Button>
-                <Button type="secondary" size="sm">
+                <Button type="secondary" size="sm" onClick={undefined}>
                   Skapa konto
                 </Button>
               </>

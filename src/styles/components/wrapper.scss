@@ -3,6 +3,7 @@
 
 /* === MAIN LAYOUT WRAPPER === */
 .main {
+  height: fit-content;
   min-height: calc(100vh - 150px); // Dynamisk höjd beroende på header + footer
   padding: 2rem;
 }

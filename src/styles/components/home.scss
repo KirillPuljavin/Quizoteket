@@ -6,9 +6,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background-color: theme.$color-bg;
   padding: 2rem;
+  margin: auto;
 
   &__content {
     display: flex;

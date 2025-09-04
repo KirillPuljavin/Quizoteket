@@ -3,54 +3,51 @@
 
 import React, { useState, useEffect } from "react";
 import Button from "@/components/Button";
+import { useQuizStore } from "@/store/useQuizStore";
 import "@/styles/components/quiz.scss";
 
 export default function QuizPage() {
-  // === Stage control ===
-  const [stage, setStage] = useState("loading"); // "loading" | "quiz" | "result"
+  const { addQuiz } = useQuizStore();
+
+  const [stage, setStage] = useState("settings"); // "settings" | "loading" | "quiz" | "result"
+  const [quiz, setQuiz] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(90); // 90s placeholder timer
+  const [timeLeft, setTimeLeft] = useState(90);
 
-  // === Fake quiz ===
-  const quiz = {
-    title: "AI & Maskininlärning",
-    description: "Testa dina kunskaper om AI, maskininlärning och algoritmer.",
-    questions: [
-      {
-        id: 1,
-        question: "Vilken algoritm används ofta för bildklassificering?",
-        options: [
-          "Linear Regression",
-          "Convolutional Neural Networks",
-          "K-Means",
-          "SVM",
-        ],
-      },
-      {
-        id: 2,
-        question: "Vilket språk används mest för maskininlärning?",
-        options: ["Python", "C++", "Java", "Rust"],
-      },
-      {
-        id: 3,
-        question: "Vilket begrepp beskriver överanpassning av en modell?",
-        options: ["Overfitting", "Underfitting", "Regularization", "Dropout"],
-      },
-    ],
+  const [settings, setSettings] = useState({
+    category: "Historia",
+    difficulty: "medium",
+    numQuestions: 5,
+  });
+
+  const handleChange = (e) => {
+    setSettings((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const totalSteps = quiz.questions.length;
+  const handleGenerate = async () => {
+    setStage("loading");
+    try {
+      const res = await fetch("/api/generateQuiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
 
-  // === Simulate quiz generation ===
-  useEffect(() => {
-    const timer = setTimeout(() => {
+      const data = await res.json();
+      if (data.error) {
+        setStage("settings");
+        return;
+      }
+
+      setQuiz(data.quiz);
       setStage("quiz");
-    }, 1800); // 1.8s fake load
-    return () => clearTimeout(timer);
-  }, []);
+    } catch {
+      setStage("settings");
+    }
+  };
 
-  // === Timer logic ===
+  // Timer
   useEffect(() => {
     if (stage !== "quiz") return;
     if (timeLeft === 0) {
@@ -61,12 +58,12 @@ export default function QuizPage() {
     return () => clearInterval(interval);
   }, [stage, timeLeft]);
 
-  const handleSelectOption = (qid, option) => {
-    setAnswers((prev) => ({ ...prev, [qid]: option }));
+  const handleSelectOption = (qid, index) => {
+    setAnswers((prev) => ({ ...prev, [qid]: index }));
   };
 
   const handleNext = () => {
-    if (currentStep < totalSteps - 1) {
+    if (currentStep < quiz.questions.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
       setStage("result");
@@ -80,30 +77,75 @@ export default function QuizPage() {
     setStage("quiz");
   };
 
+  const handlePin = () => {
+    if (quiz) addQuiz(quiz);
+  };
+
+  const correctCount =
+    quiz?.questions.filter((q) => answers[q.id] === q.correctOption).length ??
+    0;
+
   return (
     <main className="quiz">
-      {/* === Stage 1: Loading / Generation === */}
+      {/* Settings */}
+      {stage === "settings" && (
+        <section className="quiz__settings">
+          <h1>Generera nytt Quiz</h1>
+          <label>
+            Ämne:
+            <input
+              type="text"
+              name="category"
+              value={settings.category}
+              onChange={handleChange}
+            />
+          </label>
+          <label>
+            Svårighetsgrad:
+            <select
+              name="difficulty"
+              value={settings.difficulty}
+              onChange={handleChange}
+            >
+              <option value="easy">Lätt</option>
+              <option value="medium">Medel</option>
+              <option value="hard">Svår</option>
+            </select>
+          </label>
+          <label>
+            Antal frågor:
+            <input
+              type="number"
+              name="numQuestions"
+              value={settings.numQuestions}
+              min={3}
+              max={15}
+              onChange={handleChange}
+            />
+          </label>
+          <Button type="primary" size="md" onClick={handleGenerate}>
+            Generera Quiz
+          </Button>
+        </section>
+      )}
+
+      {/* Loading */}
       {stage === "loading" && (
         <section className="quiz__loading">
           <div className="quiz__spinner" />
           <p className="quiz__loading-text">Genererar quizet åt dig...</p>
-          <div className="quiz__dots">
-            <span>.</span>
-            <span>.</span>
-            <span>.</span>
-          </div>
         </section>
       )}
 
-      {/* === Stage 2: Main Quiz === */}
-      {stage === "quiz" && (
+      {/* Quiz */}
+      {stage === "quiz" && quiz && (
         <>
           <section className="quiz__header">
             <h1 className="quiz__title">{quiz.title}</h1>
             <p className="quiz__description">{quiz.description}</p>
             <div className="quiz__meta">
               <span className="quiz__progress">
-                Fråga {currentStep + 1} / {totalSteps}
+                Fråga {currentStep + 1} / {quiz.questions.length}
               </span>
               <span className="quiz__timer">
                 ⏳ {Math.floor(timeLeft / 60)}:
@@ -112,7 +154,6 @@ export default function QuizPage() {
             </div>
           </section>
 
-          {/* Question block */}
           <section className="quiz__question-block">
             <h2 className="quiz__question">
               {quiz.questions[currentStep].question}
@@ -122,12 +163,12 @@ export default function QuizPage() {
                 <button
                   key={i}
                   className={`quiz__option ${
-                    answers[quiz.questions[currentStep].id] === option
+                    answers[quiz.questions[currentStep].id] === i
                       ? "quiz__option--selected"
                       : ""
                   }`}
                   onClick={() =>
-                    handleSelectOption(quiz.questions[currentStep].id, option)
+                    handleSelectOption(quiz.questions[currentStep].id, i)
                   }
                 >
                   {option}
@@ -136,58 +177,37 @@ export default function QuizPage() {
             </div>
           </section>
 
-          {/* Navigation */}
           <section className="quiz__navigation">
             <Button
               type="primary"
               size="md"
               onClick={handleNext}
-              disabled={!answers[quiz.questions[currentStep].id]}
+              disabled={answers[quiz.questions[currentStep].id] == null}
             >
-              {currentStep === totalSteps - 1 ? "Slutför Quiz" : "Nästa"}
+              {currentStep === quiz.questions.length - 1
+                ? "Slutför Quiz"
+                : "Nästa"}
+            </Button>
+            <Button type="secondary" size="md" onClick={handlePin}>
+              📌 Pinna Quiz
             </Button>
           </section>
         </>
       )}
 
-      {/* === Stage 3: Results === */}
-      {stage === "result" && (
+      {/* Results */}
+      {stage === "result" && quiz && (
         <section className="quiz__results">
           <h2 className="quiz__results-title">Resultat</h2>
           <p className="quiz__results-subtitle">
-            Du fick <strong>2/3</strong> rätt! Bra jobbat! 🎉
+            Du fick {correctCount} av {quiz.questions.length} rätt.
           </p>
-
-          <div className="quiz__results-breakdown">
-            {quiz.questions.map((q, i) => (
-              <div key={q.id} className="quiz__results-item">
-                <h3 className="quiz__results-question">
-                  {i + 1}. {q.question}
-                </h3>
-                <p>
-                  Ditt svar:{" "}
-                  <span className="quiz__results-user">
-                    {answers[q.id] || "—"}
-                  </span>
-                </p>
-                <p>
-                  Korrekt svar:{" "}
-                  <span className="quiz__results-correct">
-                    {q.options[1]} {/* placeholder correct */}
-                  </span>
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="quiz__results-actions">
-            <Button type="primary" size="md" onClick={handleRestart}>
-              Spela igen
-            </Button>
-            <Button type="secondary" size="md">
-              📌 Pinna quiz
-            </Button>
-          </div>
+          <Button type="primary" size="md" onClick={handleRestart}>
+            Spela igen
+          </Button>
+          <Button type="secondary" size="md" onClick={handlePin}>
+            📌 Pinna Quiz
+          </Button>
         </section>
       )}
     </main>
