@@ -1,7 +1,9 @@
-// File: src/app/protected/quiz/page.jsx
+/* eslint-disable react-hooks/exhaustive-deps */
+// File: src/app/protected/quiz/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { useQuizStore } from "@/store/useQuizStore";
@@ -9,12 +11,14 @@ import "@/styles/components/quiz.scss";
 
 export default function QuizPage() {
   const { addQuiz } = useQuizStore();
+  const searchParams = useSearchParams();
 
-  const [stage, setStage] = useState("settings");
-  const [quiz, setQuiz] = useState(null);
+  const [stage, setStage] = useState<
+    "settings" | "loading" | "quiz" | "result"
+  >("settings");
+  const [quiz, setQuiz] = useState<any>(null);
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(90);
+  const [answers, setAnswers] = useState<Record<number, number>>({});
   const [pinned, setPinned] = useState(false);
 
   const [settings, setSettings] = useState({
@@ -23,44 +27,50 @@ export default function QuizPage() {
     numQuestions: 5,
   });
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (preset?: typeof settings) => {
     setStage("loading");
     try {
       const res = await fetch("/api/generateQuiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
+        body: JSON.stringify(preset ?? settings),
       });
-
       const data = await res.json();
       if (data.error) {
         setStage("settings");
         return;
       }
-
       setQuiz(data.quiz);
       setStage("quiz");
-      setPinned(false); // reset pin state for new quiz
+      setPinned(false);
     } catch {
       setStage("settings");
     }
   };
 
+  /* ─── Quick-start params ─────────────────────────────────── */
   useEffect(() => {
-    if (stage !== "quiz") return;
-    if (timeLeft === 0) {
-      setStage("result");
-      return;
-    }
-    const interval = setInterval(() => setTimeLeft((t) => t - 1), 1000);
-    return () => clearInterval(interval);
-  }, [stage, timeLeft]);
+    const cat = searchParams.get("category");
+    const diff = searchParams.get("difficulty");
+    const num = searchParams.get("numQuestions");
 
-  const handleSelectOption = (qid, index) => {
+    if (cat || diff || num) {
+      const preset = {
+        category: cat ?? "Historia",
+        difficulty: diff ?? "medium",
+        numQuestions: num ? parseInt(num, 10) : 10,
+      };
+      setSettings(preset);
+      handleGenerate(preset);
+    }
+  }, [searchParams]);
+
+  const handleSelectOption = (qid: number, index: number) => {
     setAnswers((prev) => ({ ...prev, [qid]: index }));
   };
 
   const handleNext = () => {
+    if (!quiz) return;
     if (currentStep < quiz.questions.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
@@ -71,7 +81,6 @@ export default function QuizPage() {
   const handleRestart = () => {
     setAnswers({});
     setCurrentStep(0);
-    setTimeLeft(90);
     setStage("quiz");
   };
 
@@ -83,8 +92,8 @@ export default function QuizPage() {
   };
 
   const correctCount =
-    quiz?.questions.filter((q) => answers[q.id] === q.correctOption).length ??
-    0;
+    quiz?.questions.filter((q: any) => answers[q.id] === q.correctOption)
+      .length ?? 0;
 
   return (
     <main className="page quiz">
@@ -105,6 +114,7 @@ export default function QuizPage() {
           <div className="input">
             <label className="input__label">Svårighetsgrad</label>
             <select
+              title="Difficulty"
               className="input__field"
               value={settings.difficulty}
               onChange={(e) =>
@@ -126,12 +136,12 @@ export default function QuizPage() {
             onChange={(e) =>
               setSettings((prev) => ({
                 ...prev,
-                numQuestions: e.target.value,
+                numQuestions: parseInt(e.target.value, 10),
               }))
             }
           />
 
-          <Button type="primary" size="md" onClick={handleGenerate}>
+          <Button type="primary" size="md" onClick={() => handleGenerate()}>
             Generera Quiz
           </Button>
         </section>
@@ -155,10 +165,6 @@ export default function QuizPage() {
               <span className="quiz__progress">
                 Fråga {currentStep + 1} / {quiz.questions.length}
               </span>
-              <span className="quiz__timer">
-                ⏳ {Math.floor(timeLeft / 60)}:
-                {(timeLeft % 60).toString().padStart(2, "0")}
-              </span>
             </div>
           </section>
 
@@ -167,24 +173,25 @@ export default function QuizPage() {
               {quiz.questions[currentStep].question}
             </h2>
             <div className="quiz__options">
-              {quiz.questions[currentStep].options.map((option, i) => {
-                const isSelected =
-                  answers[quiz.questions[currentStep].id] === i;
-                return (
-                  <button
-                    key={i}
-                    className={`button button--outline ${
-                      isSelected ? "button--selected" : ""
-                    }`}
-                    onClick={() =>
-                      handleSelectOption(quiz.questions[currentStep].id, i)
-                    }
-                    style={{ justifyContent: "flex-start", textAlign: "left" }}
-                  >
-                    {option}
-                  </button>
-                );
-              })}
+              {quiz.questions[currentStep].options.map(
+                (option: string, i: number) => {
+                  const isSelected =
+                    answers[quiz.questions[currentStep].id] === i;
+                  return (
+                    <button
+                      key={i}
+                      className={`button button--outline ${
+                        isSelected ? "button--selected" : ""
+                      }`}
+                      onClick={() =>
+                        handleSelectOption(quiz.questions[currentStep].id, i)
+                      }
+                    >
+                      {option}
+                    </button>
+                  );
+                }
+              )}
             </div>
           </section>
 
@@ -212,7 +219,7 @@ export default function QuizPage() {
           </p>
 
           <div className="quiz__review">
-            {quiz.questions.map((q) => {
+            {quiz.questions.map((q: any) => {
               const userAnswer = answers[q.id];
               const isCorrect = userAnswer === q.correctOption;
               return (
@@ -226,7 +233,7 @@ export default function QuizPage() {
                 >
                   <h3 className="quiz__review-question">{q.question}</h3>
                   <ul className="quiz__review-options">
-                    {q.options.map((opt, i) => (
+                    {q.options.map((opt: string, i: number) => (
                       <li
                         key={i}
                         className={`quiz__review-option

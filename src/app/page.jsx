@@ -56,7 +56,11 @@ export default function HomePage() {
               <h3 className="category-card__title">{title}</h3>
               <p className="category-card__desc">{desc}</p>
               <div className="category-card__actions">
-                <Link href="/protected/quiz">
+                <Link
+                  href={`/protected/quiz?category=${encodeURIComponent(
+                    key
+                  )}&difficulty=medium&numQuestions=10`}
+                >
                   <Button> Quick-start </Button>
                 </Link>
               </div>
