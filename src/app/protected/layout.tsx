@@ -3,6 +3,7 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function ProtectedLayout({
   children,
@@ -10,13 +11,17 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const currentUser = useAuthStore((s) => s.currentUser);
+  const hasHydrated = useAuthStore((s) => s._hasHydrated);
 
   useEffect(() => {
-    const isLoggedIn = false; // TODO: Replace with real auth check
-    if (!isLoggedIn) {
+    if (!hasHydrated) return;
+    if (!currentUser) {
       router.replace("/login");
     }
-  }, [router]);
+  }, [hasHydrated, currentUser, router]);
+
+  if (!hasHydrated) return null;
 
   return <>{children}</>;
 }

@@ -1,6 +1,6 @@
 // File: src/store/useAuthStore.ts
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface User {
   username: string;
@@ -15,6 +15,10 @@ interface AuthState {
   login: (username: string, password: string) => boolean;
   logout: () => void;
   isLoggedIn: () => boolean;
+
+  // hydration
+  _hasHydrated: boolean;
+  setHasHydrated: (v: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -25,9 +29,7 @@ export const useAuthStore = create<AuthState>()(
 
       signUp: (username, password) => {
         const { users } = get();
-        const exists = users.some((u) => u.username === username);
-        if (exists) return false;
-
+        if (users.some((u) => u.username === username)) return false;
         set({
           users: [...users, { username, password }],
           currentUser: username,
@@ -36,10 +38,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       login: (username, password) => {
-        const { users } = get();
-        const user = users.find((u) => u.username === username);
+        const user = get().users.find((u) => u.username === username);
         if (!user || user.password !== password) return false;
-
         set({ currentUser: username });
         return true;
       },
@@ -47,7 +47,16 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ currentUser: null }),
 
       isLoggedIn: () => get().currentUser !== null,
+
+      _hasHydrated: false,
+      setHasHydrated: (v) => set({ _hasHydrated: v }),
     }),
-    { name: "auth-storage" }
+    {
+      name: "auth-storage",
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    }
   )
 );
