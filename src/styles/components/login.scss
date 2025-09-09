@@ -1,0 +1,213 @@
+// File: src/styles/components/login.scss
+@import "../theme/_bundler.scss";
+
+/* =========================================
+   Login / Register View
+   - Full-page centered layout
+   - Glass card with soft shadow
+   - Responsive, accessible, no inline styles
+========================================= */
+
+.page {
+  max-width: none !important;
+}
+
+.login {
+  flex: 1 1 auto;
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: $space-8 $space-4;
+  margin: 0 !important;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  /* Decorative shapes */
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.35;
+    z-index: -1;
+    pointer-events: none;
+  }
+  &::before {
+    width: 420px;
+    height: 420px;
+    top: -120px;
+    right: -140px;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba($color-primary, 0.35),
+      transparent 60%
+    );
+  }
+  &::after {
+    width: 520px;
+    height: 520px;
+    bottom: -160px;
+    left: -120px;
+    background: radial-gradient(
+      circle at 70% 70%,
+      rgba($color-secondary, 0.35),
+      transparent 60%
+    );
+  }
+
+  /* Inner content card */
+  &__content {
+    width: 100%;
+    max-width: 460px;
+    padding: $space-8;
+    @extend .card;
+  }
+
+  /* Header */
+  .home__title {
+    font-family: $font-family-heading;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    margin-bottom: $space-2;
+    background: linear-gradient(90deg, $color-dark, darken($color-dark, 8%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .home__subtitle {
+    color: $color-muted;
+    font-size: $font-size-sm;
+    margin-bottom: $space-6;
+  }
+
+  /* Mode toggle */
+  &__toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: $space-4;
+
+    .button {
+      box-shadow: $shadow-sm;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  /* Form */
+  &__form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $space-4;
+    margin-bottom: $space-4;
+  }
+
+  &__field {
+    display: grid;
+    gap: $space-2;
+
+    /* Harmonize with shared .input styles if present */
+    .input__label {
+      font-weight: 600;
+      color: $color-dark;
+    }
+
+    .input__field {
+      background-color: #fff;
+      border: 1px solid $color-border;
+      border-radius: $radius-md;
+      padding: $space-3 $space-4;
+      font-size: $font-size-md;
+      transition: $transition-fast;
+
+      &:hover {
+        border-color: darken($color-border, 4%);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.18);
+      }
+    }
+  }
+
+  /* Error messages under inputs */
+  &__error {
+    margin-top: $space-1;
+    font-size: $font-size-sm;
+    color: $color-error;
+  }
+
+  /* Submit + actions */
+  .button[type="submit"] {
+    width: 100%;
+    font-weight: 700;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+    transition: $transition-medium;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $shadow-lg;
+    }
+    &:active {
+      transform: translateY(0);
+      box-shadow: $shadow-md;
+    }
+  }
+
+  &__actions {
+    margin-top: $space-3;
+    display: flex;
+    justify-content: center;
+
+    .button.is-ghost,
+    .button--ghost {
+      border-radius: $radius-full;
+      padding: $space-2 $space-6;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.06);
+      }
+    }
+  }
+
+  /* Fine-tuned spacing for compact screens */
+  @media (max-width: $breakpoint-xs) {
+    &__content {
+      padding: $space-6 $space-4;
+    }
+    .home__subtitle {
+      margin-bottom: $space-4;
+    }
+    &__toggle {
+      margin-bottom: $space-3;
+    }
+  }
+}
+
+/* ============================
+   Reduced motion preference
+============================ */
+@media (prefers-reduced-motion: reduce) {
+  .login {
+    &,
+    & * {
+      transition: none !important;
+      animation: none !important;
+    }
+    &::before,
+    &::after {
+      filter: none;
+    }
+  }
+}

@@ -6,6 +6,7 @@ const CHAT_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://api.openai.com/v1/chat/completions";
 const REQUEST_TIMEOUT = 20_000;
+const lang = "English";
 
 /* ─── Quiz Prompt Definitions ───────────────────────────────────────── */
 type ParsedQuiz = {
@@ -45,7 +46,7 @@ QUIZ POLICY
 - Category: all questions must match the requested subject area.
 - Title: should summarize the quiz clearly.
 - Description: should be 1-2 sentences introducing the theme.
-- Language: match the category's natural language (e.g., Historia → Swedish).
+- Language: all text must be in ${lang}.
 - Respect the exact number of requested questions.
 `.trim();
 

@@ -1,15 +1,35 @@
 // File: src/styles/components/wrapper.scss
 @import "../theme/_bundler.scss";
 
-/* === MAIN LAYOUT WRAPPER === */
-.main {
-  height: fit-content;
-  min-height: calc(100vh - 150px);
-  padding: 2rem;
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-/* === HEADER === */
+.main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+
+  background: radial-gradient(
+      1200px 600px at 120% -10%,
+      rgba($color-secondary, 0.2),
+      transparent 70%
+    ),
+    radial-gradient(
+      900px 500px at -10% 110%,
+      rgba($color-accent, 0.2),
+      transparent 70%
+    ),
+    linear-gradient(180deg, lighten($color-bg, 5%), $color-bg);
+}
+
 .header {
+  flex: 0 0 auto;
   background-color: $color-light;
   border-bottom: 1px solid $color-border;
   box-shadow: $shadow-sm;
@@ -40,7 +60,6 @@
     }
   }
 
-  /* === Navigation === */
   &__nav {
     display: flex;
     gap: 1.5rem;
@@ -78,7 +97,6 @@
     }
   }
 
-  /* === Header Actions === */
   &__actions {
     display: flex;
     align-items: center;
@@ -86,38 +104,10 @@
     position: relative;
   }
 
-  /* === Profile === */
   &__profile {
-    position: relative;
-
-    &:hover .header__dropdown {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-  }
-
-  &__avatar-btn {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.3rem 0.6rem;
-    border-radius: $radius-sm;
-    transition: background-color 0.2s ease-in-out;
-
-    &:hover {
-      background-color: rgba($color-primary, 0.05);
-    }
-  }
-
-  &__avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 2px solid $color-primary;
+    gap: 0.75rem;
   }
 
   &__username {
@@ -130,49 +120,46 @@
     }
   }
 
-  /* === Dropdown === */
-  &__dropdown {
-    position: absolute;
-    right: 0;
-    top: 120%;
-    background-color: $color-light;
-    box-shadow: $shadow-md;
-    border: 1px solid $color-border;
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
     border-radius: $radius-sm;
-    min-width: 200px;
-    padding: 0.25rem 0;
-    display: flex;
-    flex-direction: column;
-    z-index: $z-overlay;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out,
+      border-color 0.2s ease-in-out;
 
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition: all 0.25s ease-in-out;
+    &--sm {
+      font-size: 0.85rem;
+      padding: 0.35rem 0.8rem;
+    }
 
-    .header__dropdown-item {
-      padding: 0.75rem 1rem;
-      color: $color-dark;
-      font-weight: 500;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background-color 0.2s ease-in-out;
+    &--primary {
+      background-color: $color-primary;
+      color: $color-light;
+      border: 1px solid $color-primary;
 
       &:hover {
-        background-color: rgba($color-primary, 0.06);
+        background-color: darken($color-primary, 6%);
+        border-color: darken($color-primary, 6%);
       }
+    }
 
-      &.header__dropdown-logout {
-        color: $color-error;
+    &--secondary {
+      background-color: transparent;
+      color: $color-dark;
+      border: 1px solid $color-border;
 
-        &:hover {
-          background-color: rgba($color-error, 0.06);
-        }
+      &:hover {
+        background-color: rgba($color-dark, 0.04);
       }
     }
   }
 
-  /* === Mobile Menu Button === */
   &__mobile-btn {
     display: none;
 
@@ -187,8 +174,8 @@
   }
 }
 
-/* === FOOTER === */
 .footer {
+  flex: 0 0 auto;
   background-color: $color-light;
   border-top: 1px solid $color-border;
   padding: 1.5rem 2rem;

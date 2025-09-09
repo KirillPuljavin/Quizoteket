@@ -17,6 +17,23 @@ body {
   line-height: 1.6;
 }
 
+/* Components */
+.page {
+  display: flex;
+  width: flex;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.card {
+  background-color: rgba($color-light, 0.92);
+  backdrop-filter: saturate(1.1) blur(6px);
+  border: 1px solid rgba($color-accent, 0.9);
+  border-radius: $radius-lg;
+  padding: $space-6;
+  box-shadow: $shadow-lg !important;
+}
+
 /* === Layout Helpers === */
 .container {
   max-width: 1200px;

@@ -1,4 +1,4 @@
-// File: src/app/quiz/page.jsx
+// File: src/app/protected/quiz/page.jsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -87,7 +87,7 @@ export default function QuizPage() {
     0;
 
   return (
-    <main className="quiz">
+    <main className="page quiz">
       {/* Settings */}
       {stage === "settings" && (
         <section className="quiz__settings card flex-col gap-4">

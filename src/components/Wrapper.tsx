@@ -1,29 +1,17 @@
-/* eslint-disable @next/next/no-img-element */
 // File: src/components/Wrapper.tsx
 "use client";
 
 import Link from "next/link";
-import Button from "@/components/Button";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 import "@/styles/components/wrapper.scss";
 
 export default function Wrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [user, setUser] = useState<null | { name: string; avatar: string }>(
-    null
-  );
+  const { currentUser, logout } = useAuthStore();
 
   const isActive = (path: string) =>
     pathname === path ? "header__link header__link--active" : "header__link";
-
-  const handleLogin = () =>
-    setUser({
-      name: "SFG",
-      avatar: "https://api.dicebear.com/8.x/avataaars/svg?seed=SFG",
-    });
-
-  const handleLogout = () => setUser(null);
 
   return (
     <div className="wrapper">
@@ -37,52 +25,41 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
 
           {/* Navigation */}
           <nav className="header__nav">
-            <Link href="/dashboard" className={isActive("/dashboard")}>
+            <Link
+              href="/protected/dashboard"
+              className={isActive("/protected/dashboard")}
+            >
               Dashboard
             </Link>
-            <Link href="/quiz" className={isActive("/quiz")}>
+            <Link
+              href="/protected/quiz"
+              className={isActive("/protected/quiz")}
+            >
               Quiz
             </Link>
-            <Link href="/leaderboard" className={isActive("/leaderboard")}>
+            <Link
+              href="/protected/leaderboard"
+              className={isActive("/protected/leaderboard")}
+            >
               Ledartavla
             </Link>
           </nav>
 
           {/* Auth / Profile */}
           <div className="header__actions">
-            {!user ? (
-              <>
-                <Button type="primary" size="sm" onClick={handleLogin}>
-                  Logga in
-                </Button>
-                <Button type="secondary" size="sm" onClick={undefined}>
-                  Skapa konto
-                </Button>
-              </>
+            {!currentUser ? (
+              <Link href="/login" className="btn btn--primary btn--sm">
+                Logga in
+              </Link>
             ) : (
               <div className="header__profile">
-                <button className="header__avatar-btn">
-                  <img
-                    src={user.avatar}
-                    alt="avatar"
-                    className="header__avatar"
-                  />
-                  <span className="header__username">{user.name}</span>
+                <span className="header__username">{currentUser}</span>
+                <button
+                  onClick={logout}
+                  className="btn btn--secondary btn--sm header__logout"
+                >
+                  Logga ut
                 </button>
-                <div className="header__dropdown">
-                  <Link href="/profile" className="header__dropdown-item">
-                    Min profil
-                  </Link>
-                  <Link href="/settings" className="header__dropdown-item">
-                    Inställningar
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="header__dropdown-item header__dropdown-logout"
-                  >
-                    Logga ut
-                  </button>
-                </div>
               </div>
             )}
           </div>

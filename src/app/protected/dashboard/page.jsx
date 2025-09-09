@@ -1,13 +1,14 @@
-// File: src/app/dashboard/page.jsx
+// File: src/app/protected/dashboard/page.jsx
 "use client";
 
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useQuizStore } from "@/store/useQuizStore";
 import Button from "@/components/Button";
+import Input from "@/components/Input";
 import "@/styles/components/dashboard.scss";
 
-export default function DashboardPage() {
+export default function SavedQuizPage() {
   const router = useRouter();
   const { quizzes, deleteQuiz } = useQuizStore();
 
@@ -16,7 +17,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="dashboard">
+    <main className="ppage dashboard">
       {/* Welcome Section */}
       <section className="dashboard__welcome">
         <h1 className="dashboard__title">Hej, Användare! 👋</h1>
